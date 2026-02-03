@@ -1,376 +1,1613 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Architecture of Ethical Reasoning</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- 
-    Chosen Palette: Professional Indigo & Slate
-    Application Structure Plan: A thematic SPA divided into five core sections that mirror the essay's logical flow but are presented for interactive exploration. 1) Introduction with a "Gaming Discovery" hook. 2) A section detailing the Personal Reality Framework (PRF). 3) A deep dive into the "Three Universal Coordination Principles." 4) An interactive "Ethical Logic Toolkit" where users can explore ATL, STIT, and Coalition Logic. 5) A capstone "Ethical Cartography" simulation where users apply the entire framework to the AI Ethics case study. This structure guides the user from the foundational discovery to practical application, making the framework a usable tool rather than just a theoretical text.
-    Visualization & Content Choices: Report Info: Gaming Discovery Data -> Goal: Show evidence -> Viz: Bar Chart -> Interaction: Hover to see data points. -> Justification: The bar chart makes the performance advantages of diverse teams immediately apparent and impactful. -> Library: Chart.js. Report Info: PRF Components -> Goal: Explain -> Viz: Clickable cards -> Interaction: Click reveals details of each component (B, R, O, A+, C) and the UEV. Report Info: ATCF Components -> Goal: Explain measurement -> Viz: Doughnut Chart -> Interaction: Hover for component descriptions -> Justification: A doughnut chart is a good way to show a whole composed of parts (the ATCF score). -> Library: Chart.js. Report Info: Logical Tools -> Goal: Explain -> Viz: Tabbed interface for ATL, STIT, Coalition Logic -> Interaction: User clicks tabs to switch between explanations of the logical tools. Report Info: AI Ethics Case Study -> Goal: Simulate -> Viz: Step-by-step interactive workflow -> Interaction: User clicks through the 6 steps of the Ethical Cartography process, seeing how each tool is applied to generate a robust solution. This makes the abstract process concrete and actionable.
-    CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
-    -->
+    <title>Chapter 21: The Bioelectric Commonwealth - Interactive Learning Tool</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c5f8d;
+            --secondary: #4a9fd8;
+            --accent: #7ec699;
+            --warning: #e6a93d;
+            --danger: #d4717a;
+            --bg-light: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-dark: #2c3e50;
+            --text-medium: #5a6c7d;
+            --border: #dee2e6;
+            --success: #28a745;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9; /* slate-100 */
-            color: #334155; /* slate-700 */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        .section-title {
-            color: #4338ca; /* indigo-700 */
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
-        .interactive-card {
-            transition: all 0.3s ease-in-out;
-            border: 1px solid #cbd5e1; /* slate-300 */
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
         }
-        .interactive-card:hover, .interactive-card.active {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            border-color: #4f46e5; /* indigo-600 */
+
+        header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
-        .chart-container {
-            position: relative;
-            height: 300px;
+
+        header .subtitle {
+            font-size: 1.1em;
+            opacity: 0.95;
+            margin-bottom: 5px;
+        }
+
+        header .tagline {
+            font-size: 0.95em;
+            opacity: 0.85;
+            font-style: italic;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: var(--bg-light);
+            border-radius: 12px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .section.hidden {
+            display: none;
+        }
+
+        .section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h3 {
+            color: var(--secondary);
+            margin: 25px 0 15px 0;
+            font-size: 1.3em;
+        }
+
+        .section h4 {
+            color: var(--text-dark);
+            margin: 20px 0 10px 0;
+            font-size: 1.1em;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .concept-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid var(--accent);
+        }
+
+        .concept-box.key-insight {
+            background: #e8f5e9;
+            border-color: var(--success);
+        }
+
+        .concept-box.warning {
+            background: #fff3cd;
+            border-color: var(--warning);
+        }
+
+        .concept-box.critical {
+            background: #f8d7da;
+            border-color: var(--danger);
+        }
+
+        .concept-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .parallel-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        @media (max-width: 768px) {
+            .parallel-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-column {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid var(--secondary);
+        }
+
+        .comparison-column h4 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .comparison-column ul {
+            list-style-position: inside;
+            margin-left: 0;
+        }
+
+        .comparison-column li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .interactive-exercise {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+            border: 3px solid var(--accent);
+        }
+
+        .exercise-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .question {
+            margin-bottom: 25px;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        textarea {
             width: 100%;
-            max-width: 600px;
-            margin: auto;
+            min-height: 100px;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95em;
+            resize: vertical;
         }
-        .tab-btn.active {
-            background-color: #4f46e5;
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .radio-group {
+            margin: 15px 0;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: var(--bg-light);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-option:hover {
+            background: #e3f2fd;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+        }
+
+        .button:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .button.secondary {
+            background: var(--accent);
+        }
+
+        .button.secondary:hover {
+            background: #5da87a;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .feedback.info {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            color: #0c5460;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--secondary) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border);
+        }
+
+        .case-study {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid var(--warning);
+        }
+
+        .case-study-title {
+            font-weight: 700;
+            color: var(--warning);
+            margin-bottom: 10px;
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .principle-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid var(--accent);
+            transition: all 0.3s;
+        }
+
+        .principle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .principle-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .principle-name {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .diagnostic-tool {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin: 25px 0;
             color: white;
         }
-        .step-item.active .step-circle {
-            background-color: #4f46e5;
+
+        .diagnostic-tool h3 {
             color: white;
-            border-color: #4f46e5;
+            margin-bottom: 20px;
         }
-         .step-item.active .step-title {
-            color: #4338ca;
+
+        .symptom-checklist {
+            background: white;
+            color: var(--text-dark);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .symptom-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 8px 0;
+            background: var(--bg-light);
+            border-radius: 6px;
+        }
+
+        .symptom-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .symptom-item label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .diagnostic-result {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            color: var(--text-dark);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .diagnostic-result.show {
+            display: block;
+        }
+
+        .result-score {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .action-plan {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid var(--success);
+        }
+
+        .action-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .action-number {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .button {
+                display: none;
+            }
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-700">
+<body>
+    <div class="container">
+        <header>
+            <h1>Chapter 21: The Bioelectric Commonwealth</h1>
+            <div class="subtitle">Morphostasis, Aging, and the Architecture of Institutional Longevity</div>
+            <div class="tagline">"If aging can be defeated at the cellular level, it can be defeated at the social level"</div>
+        </header>
 
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-indigo-700">Ethical Architecture</h1>
-            <div class="hidden md:flex space-x-6 text-sm">
-                <a href="#foundation" class="text-slate-600 hover:text-indigo-600 transition">Foundation</a>
-                <a href="#principles" class="text-slate-600 hover:text-indigo-600 transition">Principles</a>
-                <a href="#language" class="text-slate-600 hover:text-indigo-600 transition">Language</a>
-                <a href="#toolkit" class="text-slate-600 hover:text-indigo-600 transition">Toolkit</a>
-                <a href="#cartography" class="text-slate-600 hover:text-indigo-600 transition">Cartography</a>
+        <div class="content">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
-        </nav>
-    </header>
 
-    <main class="container mx-auto px-6 py-12">
-
-        <section id="intro" class="text-center mb-24">
-            <h2 class="text-4xl md:text-5xl font-bold mb-4">The Architecture of Ethical Reasoning</h2>
-            <p class="max-w-3xl mx-auto text-lg text-slate-600">
-                This is a unified framework for applied ethics, moving from abstract theory to a practical science of coordination. It provides worldview-agnostic tools to navigate complex moral decisions and design effective ethical systems.
-            </p>
-        </section>
-
-        <section id="foundation" class="mb-24 pt-8">
-            <h3 class="text-3xl font-bold text-center mb-2 section-title">Part I: The Foundation</h3>
-            <p class="text-center max-w-2xl mx-auto mb-12 text-slate-600">
-                A key discovery from over 4,000 international gaming sessions grounds this framework: culturally diverse teams consistently outperform homogeneous ones when they focus on coordination capabilities rather than shared beliefs.
-            </p>
-            <div class="bg-white p-8 rounded-xl shadow-lg">
-                <h4 class="text-xl font-bold text-center mb-4">Performance Advantage of Diverse Teams</h4>
-                <div class="chart-container">
-                    <canvas id="performanceChart"></canvas>
+            <!-- SECTION 1: Introduction -->
+            <section class="section" id="section1">
+                <h2><span class="emoji">🧬</span> Introduction: From Individual to Institutional Aging</h2>
+                
+                <div class="concept-box key-insight">
+                    <div class="concept-title">Core Question</div>
+                    <p><strong>Why do we age?</strong> And more importantly: <strong>Do institutions age?</strong> Do corporations, universities, and democracies experience the same thermodynamic decay that individual bodies do?</p>
                 </div>
-            </div>
-            <div class="mt-12">
-                 <h4 class="text-2xl font-bold text-center mb-6">Your Ethical Mind as Living Architecture: The PRF</h4>
-                 <div class="grid md:grid-cols-3 gap-6">
-                    <div class="col-span-3 md:col-span-1 space-y-4">
-                         <div id="prf-card-b" class="interactive-card bg-white p-4 rounded-lg cursor-pointer"><strong>B:</strong> Belief System</div>
-                         <div id="prf-card-r" class="interactive-card bg-white p-4 rounded-lg cursor-pointer"><strong>R:</strong> Rule System</div>
-                         <div id="prf-card-o" class="interactive-card bg-white p-4 rounded-lg cursor-pointer"><strong>O:</strong> Ontological System</div>
-                         <div id="prf-card-a" class="interactive-card bg-white p-4 rounded-lg cursor-pointer"><strong>A+:</strong> Authenticity System</div>
-                         <div id="prf-card-c" class="interactive-card bg-white p-4 rounded-lg cursor-pointer"><strong>C:</strong> Coordination Capabilities</div>
-                         <div id="prf-card-uev" class="interactive-card bg-white p-4 rounded-lg cursor-pointer"><strong>UEV:</strong> Unified Experience Vector</div>
-                    </div>
-                    <div id="prf-detail-view" class="md:col-span-2 bg-white p-6 rounded-xl shadow-lg">
-                        <h5 id="prf-detail-title" class="font-bold text-xl mb-2 text-indigo-700">Click a component to learn more</h5>
-                        <p id="prf-detail-text" class="text-slate-600">Your moral reasoning operates through an integrated, measurable system. This Personal Reality Framework (PRF) is the living architecture of your ethical mind.</p>
-                    </div>
-                 </div>
-            </div>
-        </section>
 
-        <section id="principles" class="mb-24 pt-8">
-            <h3 class="text-3xl font-bold text-center mb-2 section-title">The Three Universal Coordination Principles</h3>
-            <p class="text-center max-w-2xl mx-auto mb-12 text-slate-600">
-                Cross-cultural research reveals that all effective ethical coordination, regardless of the specific moral tradition, relies on three organizational principles.
-            </p>
-            <div class="grid md:grid-cols-3 gap-8">
-                 <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                    <div class="text-4xl mb-4">1</div>
-                    <h4 class="font-bold text-xl mb-2">Capability-Based Connection</h4>
-                    <p class="text-slate-600">Coordination emerges from recognizing others' ethical capabilities, not from demanding shared beliefs. A utilitarian and a deontologist can work together by respecting each other's analytical strengths.</p>
-                </div>
-                 <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                    <div class="text-4xl mb-4">2</div>
-                    <h4 class="font-bold text-xl mb-2">Temporal Coherence</h4>
-                    <p class="text-slate-600">Ethical decisions must integrate past wisdom, present reality, and future consequences. This ability to maintain coherence across time is a measurable predictor of ethical capability.</p>
-                </div>
-                 <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                    <div class="text-4xl mb-4">3</div>
-                    <h4 class="font-bold text-xl mb-2">Cross-Scale Organization</h4>
-                    <p class="text-slate-600">The same architectural principles that enable individual moral agency also enable effective family, institutional, and societal ethics. Ethical systems are fractal.</p>
-                </div>
-            </div>
-        </section>
+                <p>In previous chapters, you learned:</p>
+                <ul>
+                    <li>You are a BROA+ (Biocognitive Repair-Oriented Agent) fighting entropy</li>
+                    <li>Your ethics require metabolic substrate (Chapter 6: Sapolsky Limit)</li>
+                    <li>You maintain Coherent Information Bits (CIBs) at enormous energetic cost</li>
+                    <li>BioBonds provide external regulation when individual capacity fails</li>
+                </ul>
 
-        <section id="language" class="mb-24 pt-8">
-            <h3 class="text-3xl font-bold text-center mb-2 section-title">Part II: The Language of Capability</h3>
-            <p class="text-center max-w-2xl mx-auto mb-12 text-slate-600">
-                This framework revolutionizes how we understand ethical statements. Instead of asking what a statement like "We should help the poor" *means* as a universal truth, we ask what *capabilities* an agent needs to work with it effectively.
-            </p>
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <h4 class="text-xl font-bold text-center">Capability Specification for: "We Should Help the Poor"</h4>
-                <p class="text-center text-sm text-slate-500 mb-8">Effective use of this statement requires four distinct capabilities:</p>
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-                    <div>
-                        <div class="mx-auto bg-indigo-100 text-indigo-700 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">R</div>
-                        <h5 class="font-semibold mt-4">Recognition</h5>
-                        <p class="text-sm text-slate-500">Ability to identify poverty's impacts.</p>
-                    </div>
-                    <div>
-                        <div class="mx-auto bg-indigo-100 text-indigo-700 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">R</div>
-                        <h5 class="font-semibold mt-4">Response</h5>
-                        <p class="text-sm text-slate-500">Procedural knowledge for anti-poverty actions.</p>
-                    </div>
-                    <div>
-                        <div class="mx-auto bg-indigo-100 text-indigo-700 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">C</div>
-                        <h5 class="font-semibold mt-4">Coordination</h5>
-                        <p class="text-sm text-slate-500">Skills to work with others on complementary actions.</p>
-                    </div>
-                    <div>
-                        <div class="mx-auto bg-indigo-100 text-indigo-700 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">A</div>
-                        <h5 class="font-semibold mt-4">Assessment</h5>
-                        <p class="text-sm text-slate-500">Meta-capacity to evaluate and improve strategies.</p>
+                <p>This chapter introduces revolutionary work by Dr. Michael Levin at Tufts University showing that:</p>
+
+                <div class="concept-box critical">
+                    <div class="concept-title">Levin's Central Discovery</div>
+                    <p><strong>Aging is not primarily genetic damage or cellular wear-and-tear.</strong></p>
+                    <p><strong>Aging is the loss of informational coherence</strong> — the breakdown of bioelectric "software" telling cells how to maintain youthful patterns.</p>
+                </div>
+
+                <p>This chapter will demonstrate that <strong>the same physics operates at every scale</strong>: from cells to individuals to institutions.</p>
+
+                <div class="interactive-exercise">
+                    <div class="exercise-title">Reflection Question</div>
+                    <div class="question">
+                        <div class="question-text">Before we continue, write down your initial reaction: Does it make sense that organizations could "age" the same way bodies do? Why or why not?</div>
+                        <textarea id="initial-reflection" placeholder="Your thoughts here..." aria-label="Initial reflection on organizational aging"></textarea>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <section id="toolkit" class="mb-24 pt-8">
-            <h3 class="text-3xl font-bold text-center mb-2 section-title">Part III: The Measurement Toolkit</h3>
-             <p class="text-center max-w-2xl mx-auto mb-12 text-slate-600">
-                This framework integrates formal logic as a practical toolkit for ethical reasoning. Explore the different tools and their applications below.
-            </p>
-            <div class="bg-white rounded-xl shadow-lg">
-                <div class="flex border-b border-slate-200">
-                    <button class="tab-btn flex-1 p-4 font-semibold text-slate-500 transition active" data-tab="atl">ATL</button>
-                    <button class="tab-btn flex-1 p-4 font-semibold text-slate-500 transition" data-tab="stit">STIT</button>
-                    <button class="tab-btn flex-1 p-4 font-semibold text-slate-500 transition" data-tab="coalition">Coalition Logic</button>
-                    <button class="tab-btn flex-1 p-4 font-semibold text-slate-500 transition" data-tab="atcf">ATCF</button>
+                <div class="navigation">
+                    <button class="button" onclick="nextSection()" style="margin-left: auto;">Continue to Levin's Discovery <span aria-hidden="true">→</span></button>
                 </div>
-                <div class="p-8">
-                    <div id="tab-content-atl" class="tab-content">
-                        <h4 class="text-xl font-bold">Alternating-Time Temporal Logic (ATL)</h4>
-                        <p class="text-sm text-slate-500 mb-4">For Strategic Ethical Analysis</p>
-                        <p>ATL shifts the question from "Is this action right?" to "Do we have a strategy to ensure an ethical outcome?" It transforms abstract moral debate into practical analysis of capabilities and coordination.</p>
-                        <p class="mt-2 text-sm bg-slate-50 p-3 rounded-lg"><strong>Example:</strong> "Does our society have coalition strategies to guarantee universal healthcare access, regardless of political opposition or economic shifts?"</p>
+            </section>
+
+            <!-- SECTION 2: Levin's Discovery -->
+            <section class="section hidden" id="section2">
+                <h2><span class="emoji">⚡</span> Levin's Discovery: Bioelectric Patterns as Cellular CIBs</h2>
+
+                <h3>The Software of Life</h3>
+                
+                <p>Remember from Chapter 5: A CIB (Coherent Information Bit) is a low-entropy, high-depth informational structure that persists through active thermodynamic maintenance.</p>
+
+                <p>Michael Levin discovered that <strong>this same architecture exists at the cellular level</strong>.</p>
+
+                <div class="concept-box">
+                    <div class="concept-title">The Planarian Experiment</div>
+                    <p>Cut a planarian flatworm in half. Each piece regenerates into a complete worm with head, tail, eyes, brain — perfect anatomy.</p>
+                    <p><strong>How do the cells "know" what to build?</strong></p>
+                    <p>Levin showed: It's stored in a <strong>bioelectric pattern</strong> — voltage gradients across cell membranes functioning as an informational "map" of the body plan.</p>
+                </div>
+
+                <h3>Bioelectric Patterns ARE Somatic CIBs</h3>
+
+                <div class="parallel-comparison">
+                    <div class="comparison-column">
+                        <h4>Identity Kernel (Your CIBs)</h4>
+                        <ul>
+                            <li>Low-entropy structure</li>
+                            <li>High-depth information</li>
+                            <li>Active maintenance (PFC + glucose)</li>
+                            <li>Normative weight (guides behavior)</li>
+                            <li>Temporal density (past/present/future)</li>
+                            <li>Fragile (can decohere under stress)</li>
+                        </ul>
                     </div>
-                    <div id="tab-content-stit" class="tab-content hidden">
-                        <h4 class="text-xl font-bold">"Seeing To It That" Logic (STIT)</h4>
-                        <p class="text-sm text-slate-500 mb-4">For Personal Moral Agency</p>
-                        <p>STIT formalizes individual responsibility. It distinguishes between hoping for an outcome and having the actual capability to ethically ensure it happens. This prevents making commitments based on good intentions alone.</p>
-                         <p class="mt-2 text-sm bg-slate-50 p-3 rounded-lg"><strong>Example:</strong> It helps differentiate "I hope I'll be a good parent" (a wish) from "I have the skills and resources to ensure my child receives needed care" (a commitment based on capability).</p>
-                    </div>
-                    <div id="tab-content-coalition" class="tab-content hidden">
-                        <h4 class="text-xl font-bold">Coalition Logic</h4>
-                         <p class="text-sm text-slate-500 mb-4">For Distributed Ethical Responsibility</p>
-                        <p>This tool is for problems no single person can solve. It models how groups can coordinate their capabilities to achieve ethical outcomes that are beyond any individual's power.</p>
-                        <p class="mt-2 text-sm bg-slate-50 p-3 rounded-lg"><strong>Example:</strong> "What combination of roles (HR, leadership, staff) and capabilities is needed to eliminate hiring bias, and how must they coordinate to succeed?"</p>
-                    </div>
-                    <div id="tab-content-atcf" class="tab-content hidden grid md:grid-cols-2 gap-6 items-center">
-                        <div>
-                            <h4 class="text-xl font-bold">Adaptive Temporal Coherence Function (ATCF)</h4>
-                            <p class="text-sm text-slate-500 mb-4">For Mathematical Ethics Across Time</p>
-                            <p>The ATCF is a measurable assessment of an agent's ability to maintain a coherent ethical identity over time. High scores predict superior ethical decision-making. It has four key components.</p>
-                        </div>
-                        <div class="chart-container" style="height: 250px;">
-                             <canvas id="atcfChart"></canvas>
-                        </div>
+                    <div class="comparison-column">
+                        <h4>Bioelectric Pattern (Cellular CIBs)</h4>
+                        <ul>
+                            <li>Low-entropy structure</li>
+                            <li>High-depth information</li>
+                            <li>Active maintenance (ion pumps + ATP)</li>
+                            <li>Normative weight (guides cell behavior)</li>
+                            <li>Temporal density (developmental history)</li>
+                            <li>Fragile (can degrade with aging)</li>
+                        </ul>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <section id="cartography" class="pt-8">
-            <h3 class="text-3xl font-bold text-center mb-2 section-title">Part IV: Applied Integration - Ethical Cartography</h3>
-            <p class="text-center max-w-2xl mx-auto mb-12 text-slate-600">
-                Ethical Cartography is the unified process in action. It's about mapping a moral territory and designing navigation routes, not just arguing about destinations. Let's apply it to the challenge of developing AI Ethics Guidelines.
-            </p>
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                 <div class="flex flex-col md:flex-row gap-8">
-                    <div class="w-full md:w-1/3 space-y-2">
-                        <div id="step-1" class="step-item interactive-card p-3 rounded-lg cursor-pointer active">
-                            <h5 class="step-title font-semibold">1. Cross-Scale Analysis</h5>
+                <div class="concept-box key-insight">
+                    <div class="concept-title">Morphostasis: Anatomical Homeostasis</div>
+                    <p>Levin calls active maintenance of anatomical structure <strong>morphostasis</strong>.</p>
+                    <p>Your liver "knows" it should be liver-shaped. Your hand "knows" it should have five fingers. This knowledge is an <strong>actively maintained bioelectric pattern</strong> that cells collectively read and obey.</p>
+                    <p><strong>When morphostasis fails, aging begins.</strong></p>
+                </div>
+
+                <div class="navigation">
+                    <button class="button secondary" onclick="prevSection()"><span aria-hidden="true">←</span> Previous</button>
+                    <button class="button" onclick="nextSection()">Continue to Aging as Information Loss <span aria-hidden="true">→</span></button>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Aging as Information Loss -->
+            <section class="section hidden" id="section3">
+                <h2><span class="emoji">📉</span> Aging as Information Loss: The Cellular Sapolsky Limit</h2>
+
+                <h3>The Degradation of the Bioelectric Signal</h3>
+
+                <div class="concept-box critical">
+                    <div class="concept-title">Levin's Key Insight</div>
+                    <p>"The bioelectrical pattern is degraded with aging, and when that pattern degrades, everything else is going to go wrong afterward."</p>
+                </div>
+
+                <p>As we age, electrical communication between cells becomes "fuzzier." Voltage gradients specifying "youthful tissue architecture" degrade into noise. Cells lose instructive signals telling them what to maintain.</p>
+
+                <p><strong>The result:</strong> Tissues drift from target state, accumulating damage not because DNA breaks down primarily, but because <strong>the informational map telling cells how to repair DNA is degrading</strong>.</p>
+
+                <h3>The Pattern Across Scales</h3>
+
+                <div class="parallel-comparison">
+                    <div class="comparison-column">
+                        <h4>Individual Level (Chapter 6)</h4>
+                        <ul>
+                            <li>Ethical CIBs require PFC maintenance</li>
+                            <li>Below Sapolsky Limit → PFC offline</li>
+                            <li>CIBs decohere → ethical collapse</li>
+                            <li>Result: Reactive tribalism</li>
+                            <li>This is <em>functional</em> aging (temporary)</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-column">
+                        <h4>Cellular Level (Levin's Work)</h4>
+                        <ul>
+                            <li>Tissue morphology requires bioelectric maintenance</li>
+                            <li>Below metabolic threshold → pattern degrades</li>
+                            <li>Cellular CIBs decohere → tissue loses integrity</li>
+                            <li>Result: Physical aging</li>
+                            <li>This is <em>biological</em> aging (progressive)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="concept-box key-insight">
+                    <div class="concept-title">The Universal Pattern</div>
+                    <p><strong>Aging at any scale is the failure to maintain high-complexity, low-entropy information structures under thermodynamic pressure.</strong></p>
+                </div>
+
+                <h3>The Planarian Exception: Proof Aging Can Be Defeated</h3>
+
+                <div class="case-study">
+                    <div class="case-study-title">Case Study: Immortal Planaria</div>
+                    <p><strong>Observation:</strong> Certain planarian flatworms are effectively immortal. They don't age. They regenerate indefinitely.</p>
+                    <p><strong>Surprising Finding:</strong> Planaria accumulate massive DNA damage over time. Their genomes become "messy" with mutations. Yet they don't get cancer or senesce.</p>
+                    <p><strong>Levin's Conclusion:</strong> "The fact that the animal with the messiest genome is also highly regenerative, cancer-resistant, and immortal tells us that all this focus on genetics is somewhat misplaced."</p>
+                    <p><strong>The Secret:</strong> Despite genetic chaos, cells obey a coherent bioelectric pattern saying "build a healthy worm." As long as that pattern holds, regeneration is perfect.</p>
+                </div>
+
+                <div class="concept-box warning">
+                    <div class="concept-title">Implication for Humans</div>
+                    <p>Genetic damage may not be the root cause of aging. The root cause may be <strong>loss of the informational pattern that tells cells how to fix genetic damage and maintain youthful structure.</strong></p>
+                </div>
+
+                <div class="navigation">
+                    <button class="button secondary" onclick="prevSection()"><span aria-hidden="true">←</span> Previous</button>
+                    <button class="button" onclick="nextSection()">Continue to Boredom Theory <span aria-hidden="true">→</span></button>
+                </div>
+            </section>
+
+            <!-- SECTION 4: Boredom Theory -->
+            <section class="section hidden" id="section4">
+                <h2><span class="emoji">🎯</span> The Boredom Theory of Aging</h2>
+
+                <h3>When Purpose Ends, Decay Begins</h3>
+
+                <div class="concept-box critical">
+                    <div class="concept-title">Levin's Radical Proposal</div>
+                    <p>During development, your cellular collective has a clear goal: <strong>build a human body</strong>. Every cell participates in this coordination project.</p>
+                    <p><strong>But what happens when the goal is achieved?</strong> When the body is built and adulthood is reached?</p>
+                    <p><strong>Hypothesis:</strong> The cellular network loses its drive to maintain order once the developmental goal is met. Without new challenges, the system drifts.</p>
+                </div>
+
+                <p>In computational simulations, virtual organisms that completed their body plan with no new goals saw patterns gradually deteriorate — even without external damage. The system had nothing left to optimize toward, so it decayed.</p>
+
+                <h3>Planaria's Escape: Constant Challenge as Reset</h3>
+
+                <div class="case-study">
+                    <div class="case-study-title">How Planaria Escape Boredom Death</div>
+                    <p><strong>Strategy:</strong> They constantly challenge themselves.</p>
+                    <p>Planarian reproduction involves literally tearing in half. Every time, they must regenerate entire body sections — head, brain, organs.</p>
+                    <p><strong>This constant regeneration serves as periodic reset of the bioelectric pattern.</strong></p>
+                    <p>Cells are continually reminded: "Your goal is to build a complete worm." They never experience "boredom" of completion.</p>
+                </div>
+
+                <div class="concept-box key-insight">
+                    <div class="concept-title">The Critical Question</div>
+                    <p>Levin asks: "Can we use our bioelectric interface to provide a reminder to the cells of what they should be doing?"</p>
+                    <p>Can we give human tissues new regenerative goals? Can we periodically reset the bioelectric pattern to prevent age-related drift?</p>
+                </div>
+
+                <h3>Anthrobots: Proof of Concept</h3>
+
+                <p>In 2023-2025, Levin's lab provided experimental evidence through <strong>Anthrobots</strong>:</p>
+
+                <div class="concept-box">
+                    <div class="concept-title">The Anthrobot Discovery</div>
+                    <ol>
+                        <li>Take adult human cells (from trachea)</li>
+                        <li>Allow them to self-assemble in novel environment</li>
+                        <li>Cells spontaneously organize into millimeter-scale multicellular structures</li>
+                        <li>These "anthrobots" can move using cilia and perform tasks like reconnecting neurons</li>
+                        <li><strong>The cells became biologically younger</strong></li>
+                    </ol>
+                    <p><strong>Gene expression analysis showed:</strong> Forming an anthrobot caused cells to reset aging markers — activating thousands of genes normally silent in adult cells.</p>
+                    <p><strong>No genetic reprogramming. No Yamanaka factors. Just reorganization into a new morphogenetic task.</strong></p>
+                </div>
+
+                <div class="concept-box critical">
+                    <div class="concept-title">The Staggering Implication</div>
+                    <p><strong>Giving cells a new purpose — a new goal, a new challenge — reverses cellular aging.</strong></p>
+                    <p>The cells didn't just participate in building something new. They <em>became</em> new through the act of building.</p>
+                </div>
+
+                <div class="interactive-exercise">
+                    <div class="exercise-title">Application Question</div>
+                    <div class="question">
+                        <div class="question-text">If giving cells a new purpose reverses aging, what does that suggest about your own life? Have you achieved your main goals and experienced "drift"? What new purpose might provide regeneration?</div>
+                        <textarea id="purpose-reflection" placeholder="Your reflection..." aria-label="Purpose reflection"></textarea>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="button secondary" onclick="prevSection()"><span aria-hidden="true">←</span> Previous</button>
+                    <button class="button" onclick="nextSection()">Continue to Institutional Aging <span aria-hidden="true">→</span></button>
+                </div>
+            </section>
+
+            <!-- SECTION 5: Institutional Aging -->
+            <section class="section hidden" id="section5">
+                <h2><span class="emoji">🏢</span> From Cellular to Social: The Aging of Institutions</h2>
+
+                <h3>Do Organizations Experience Morphostatic Failure?</h3>
+
+                <div class="concept-box key-insight">
+                    <div class="concept-title">The Central Hypothesis</div>
+                    <p>If individual organisms age when bioelectric patterns degrade, and cellular collectives age when they lose developmental purpose, then do <strong>social collectives age when their ethical patterns degrade and their institutional purpose is achieved?</strong></p>
+                </div>
+
+                <h3>Test Cases: Observable Reality</h3>
+
+                <div class="case-study">
+                    <div class="case-study-title">Case 1: The Startup That IPO'd</div>
+                    <p><strong>Formation Phase:</strong> 8 years with crystal-clear purpose (build revolutionary product, achieve product-market fit, go public). Entire organization aligned. BioBonds strong. Ethical clarity high. Bioelectric pattern sharp.</p>
+                    <p><strong>Achievement Phase:</strong> IPO completed. Goal achieved.</p>
+                    <p><strong>What Happened Next:</strong> Drift, bureaucratization, loss of innovation, ethical decay (shift to shareholder value extraction), talent exodus, eventual acquisition.</p>
+                    <p><strong>Diagnosis:</strong> The organization aged. Not because people retired, but because <strong>informational coherence holding the collective together degraded once organizing purpose was achieved.</strong></p>
+                </div>
+
+                <div class="case-study">
+                    <div class="case-study-title">Case 2: Post-War Civic Organizations</div>
+                    <p><strong>Formation Phase:</strong> After WWII, Americans built civic institutions with clear purpose: rebuild society, create prosperity, bind communities, prevent another Depression.</p>
+                    <p><strong>Achievement Phase:</strong> By 1970s-80s, goals largely achieved. Prosperity widespread. Democracy stable.</p>
+                    <p><strong>What Happened Next:</strong> Civic participation collapsed (Robert Putnam's "Bowling Alone"). Americans stopped joining organizations, stopped volunteering, stopped building community.</p>
+                    <p><strong>Diagnosis:</strong> The civic network aged. Bioelectric pattern of collective purpose degraded. Communities experienced institutional "boredom."</p>
+                </div>
+
+                <div class="case-study">
+                    <div class="case-study-title">Case 3: The University</div>
+                    <p><strong>Formation Phase:</strong> Medieval universities: preserve knowledge through Dark Ages, train clergy. Modern: expand knowledge, train professionals, provide social mobility.</p>
+                    <p><strong>Achievement Phase:</strong> Goals partially accomplished. Knowledge preserved. Professionals trained.</p>
+                    <p><strong>What Happened Next:</strong> Administrative bloat, grade inflation, loss of intellectual risk-taking, ethical scandals, corporatization, students as customers.</p>
+                    <p><strong>Diagnosis:</strong> Institution ages when it loses morphostatic purpose.</p>
+                </div>
+
+                <h3>The Common Pattern</h3>
+
+                <div class="concept-box">
+                    <div class="concept-title">Five Stages of Institutional Aging</div>
+                    <ol>
+                        <li><strong>Formation:</strong> Clear purpose, strong alignment, high coherence (sharp bioelectric pattern)</li>
+                        <li><strong>Achievement:</strong> Purpose accomplished, goals met</li>
+                        <li><strong>Drift:</strong> Without new organizing purpose, coherence degrades (bioelectric pattern fuzzes)</li>
+                        <li><strong>Decay:</strong> Institutional aging manifests as bureaucratization, ethical decay, loss of innovation</li>
+                        <li><strong>Death:</strong> Acquisition, dissolution, or zombie institution (form without function)</li>
+                    </ol>
+                </div>
+
+                <div class="concept-box critical">
+                    <div class="concept-title">Core Insight</div>
+                    <p><strong>Institutional aging is information loss</strong> — exactly parallel to biological aging in Levin's framework.</p>
+                </div>
+
+                <div class="diagnostic-tool">
+                    <h3>Diagnostic Tool: Is Your Institution Aging?</h3>
+                    <p>Check symptoms you observe in an organization you're part of (workplace, school, club, etc.):</p>
+                    
+                    <div class="symptom-checklist">
+                        <div class="symptom-item">
+                            <input type="checkbox" id="symptom1" name="symptom" value="10">
+                            <label for="symptom1">Death of Nuance: Complex problems reduced to binary thinking</label>
                         </div>
-                        <div id="step-2" class="step-item interactive-card p-3 rounded-lg cursor-pointer">
-                            <h5 class="step-title font-semibold">2. PRF Proposition Development</h5>
+                        <div class="symptom-item">
+                            <input type="checkbox" id="symptom2" name="symptom" value="10">
+                            <label for="symptom2">Rise of Certainty: Rigid confidence despite reduced adaptability</label>
                         </div>
-                        <div id="step-3" class="step-item interactive-card p-3 rounded-lg cursor-pointer">
-                             <h5 class="step-title font-semibold">3. Strategic Analysis (ATL)</h5>
+                        <div class="symptom-item">
+                            <input type="checkbox" id="symptom3" name="symptom" value="10">
+                            <label for="symptom3">Bureaucratization: Processes exist for their own sake, not to serve purpose</label>
                         </div>
-                        <div id="step-4" class="step-item interactive-card p-3 rounded-lg cursor-pointer">
-                             <h5 class="step-title font-semibold">4. Agency Assessment (STIT)</h5>
+                        <div class="symptom-item">
+                            <input type="checkbox" id="symptom4" name="symptom" value="10">
+                            <label for="symptom4">Time Horizon Collapse: Quarterly thinking dominates despite long-term mission</label>
                         </div>
-                         <div id="step-5" class="step-item interactive-card p-3 rounded-lg cursor-pointer">
-                             <h5 class="step-title font-semibold">5. Temporal Check (ATCF)</h5>
+                        <div class="symptom-item">
+                            <input type="checkbox" id="symptom5" name="symptom" value="10">
+                            <label for="symptom5">Ethical Simplification: Complex values reduced to single metric (profit, rankings)</label>
                         </div>
-                         <div id="step-6" class="step-item interactive-card p-3 rounded-lg cursor-pointer">
-                             <h5 class="step-title font-semibold">6. Game-Theoretic Validation</h5>
+                        <div class="symptom-item">
+                            <input type="checkbox" id="symptom6" name="symptom" value="10">
+                            <label for="symptom6">Loss of Innovation: "We've always done it this way" dominates</label>
+                        </div>
+                        <div class="symptom-item">
+                            <input type="checkbox" id="symptom7" name="symptom" value="10">
+                            <label for="symptom7">Talent Exodus: Best people leave, citing loss of mission/meaning</label>
+                        </div>
+                        <div class="symptom-item">
+                            <input type="checkbox" id="symptom8" name="symptom" value="10">
+                            <label for="symptom8">BioBond Fragmentation: Deep relationships replaced by transactional interactions</label>
+                        </div>
+                        <div class="symptom-item">
+                            <input type="checkbox" id="symptom9" name="symptom" value="10">
+                            <label for="symptom9">Purpose Ambiguity: Ask three people the mission, get three different answers</label>
+                        </div>
+                        <div class="symptom-item">
+                            <input type="checkbox" id="symptom10" name="symptom" value="10">
+                            <label for="symptom10">Zombie Maintenance: Organization exists but no one remembers why</label>
                         </div>
                     </div>
-                    <div class="w-full md:w-2/3 bg-slate-50 p-6 rounded-lg">
-                        <h4 id="step-detail-title" class="font-bold text-xl mb-2 text-indigo-700"></h4>
-                        <p id="step-detail-text" class="text-slate-600"></p>
-                    </div>
-                 </div>
-            </div>
-        </section>
 
-    </main>
-    <footer class="text-center py-8 text-sm text-slate-500">
-        <p>The Architecture of Ethical Reasoning: A Unified Framework. FAIM-QIRF.</p>
-        <a href="https://rmertzman-tech.github.io/capability-coordination-framework/index.html" class="hover:text-indigo-600 underline" target="_blank">Technical Repository</a>
-    </footer>
+                    <button class="button" onclick="calculateDiagnostic()">Calculate Institutional Aging Score</button>
+
+                    <div class="diagnostic-result" id="diagnosticResult">
+                        <div class="result-score" id="agingScore"></div>
+                        <div id="agingInterpretation"></div>
+                        <div id="agingRecommendations"></div>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="button secondary" onclick="prevSection()"><span aria-hidden="true">←</span> Previous</button>
+                    <button class="button" onclick="nextSection()">Continue to BioBond Networks <span aria-hidden="true">→</span></button>
+                </div>
+            </section>
+
+            <!-- SECTION 6: BioBond Networks -->
+            <section class="section hidden" id="section6">
+                <h2><span class="emoji">🔗</span> BioBonds as Bioelectric Networks</h2>
+
+                <h3>From Individual Support to Collective Coherence</h3>
+
+                <p>In Chapter 6, we introduced BioBonds as deep, high-trust connections providing thermodynamic support. Levin's work reveals a deeper function:</p>
+
+                <div class="concept-box key-insight">
+                    <div class="concept-title">BioBonds Are Social Bioelectric Networks</div>
+                    <p>Just as cells require bioelectric communication to maintain tissue architecture, <strong>humans require social bonding to maintain Identity Kernel coherence.</strong></p>
+                    <p>You are not designed to maintain ethical CIBs in isolation. You need the "voltage patterns" of social connection to tell you who you are and what you should be doing.</p>
+                </div>
+
+                <h3>The Formal Parallel</h3>
+
+                <div class="parallel-comparison">
+                    <div class="comparison-column">
+                        <h4>Cellular Level</h4>
+                        <ul>
+                            <li><strong>Network:</strong> Ion channels creating voltage gradients</li>
+                            <li><strong>Function:</strong> Maintain morphostatic information (what shape to build/maintain)</li>
+                            <li><strong>Failure:</strong> Pattern degradation → tissue aging</li>
+                            <li><strong>Regeneration:</strong> Reset bioelectric pattern through new challenge</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-column">
+                        <h4>Social Level</h4>
+                        <ul>
+                            <li><strong>Network:</strong> BioBonds creating "coherence gradients"</li>
+                            <li><strong>Function:</strong> Maintain Identity Kernel (who you are, what you value)</li>
+                            <li><strong>Failure:</strong> Pattern degradation → identity fragmentation</li>
+                            <li><strong>Regeneration:</strong> Reset social purpose through new collective challenge</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Network Topology: Strong Ties vs. Weak Ties</h3>
+
+                <div class="concept-box">
+                    <div class="concept-title">Two Types of Bioelectric Networks</div>
+                    
+                    <h4>Strong Ties = Core Bioelectric Network</h4>
+                    <ul>
+                        <li>High coherence, high redundancy</li>
+                        <li>Maintain baseline Identity Kernel</li>
+                        <li>Provide metabolic/emotional regulation</li>
+                        <li>Essential for survival but can become insular</li>
+                        <li><strong>Analogy:</strong> Tightly coupled ion channels maintaining critical organs</li>
+                    </ul>
+
+                    <h4>Weak Ties = Extended Information Network</h4>
+                    <ul>
+                        <li>Lower coherence, high diversity</li>
+                        <li>Expose you to new CIBs and purposes</li>
+                        <li>Prevent "boredom" through novel challenges</li>
+                        <li>Enable adaptation and growth</li>
+                        <li><strong>Analogy:</strong> Longer-range bioelectric signaling coordinating whole-organism adaptation</li>
+                    </ul>
+                </div>
+
+                <div class="concept-box warning">
+                    <div class="concept-title">Balance Is Essential</div>
+                    <p><strong>Too much emphasis on strong ties:</strong> Insularity, stagnation, eventual "boredom death"</p>
+                    <p><strong>Too much emphasis on weak ties:</strong> Fragmentation, no coherent core, identity instability</p>
+                </div>
+
+                <h3>Four Layers of BioBond Infrastructure</h3>
+
+                <div class="principles-grid">
+                    <div class="principle-card">
+                        <div class="principle-number">1</div>
+                        <div class="principle-name">Personal BioBonds</div>
+                        <p><strong>Function:</strong> Maintain individual Identity Kernel coherence</p>
+                        <p><strong>Structure:</strong> 3-7 deep relationships providing mutual regulation</p>
+                        <p><strong>Failure:</strong> Isolation → identity fragmentation</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-number">2</div>
+                        <div class="principle-name">Team BioBonds</div>
+                        <p><strong>Function:</strong> Maintain collective purpose and coordination</p>
+                        <p><strong>Structure:</strong> 8-15 person stable teams with shared goals</p>
+                        <p><strong>Failure:</strong> Dysfunction → Hare-hunting</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-number">3</div>
+                        <div class="principle-name">Organizational BioBonds</div>
+                        <p><strong>Function:</strong> Maintain institutional ethical pattern</p>
+                        <p><strong>Structure:</strong> Cross-functional communities, governance bodies</p>
+                        <p><strong>Failure:</strong> Siloing → pattern fragmentation</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-number">4</div>
+                        <div class="principle-name">Societal BioBonds</div>
+                        <p><strong>Function:</strong> Maintain civilizational coherence across difference</p>
+                        <p><strong>Structure:</strong> Voluntary associations, civic organizations</p>
+                        <p><strong>Failure:</strong> Atomization → social collapse</p>
+                    </div>
+                </div>
+
+                <div class="interactive-exercise">
+                    <div class="exercise-title">BioBond Network Mapping</div>
+                    <div class="question">
+                        <div class="question-text">List your current BioBonds at each layer. Which layer is weakest? What would strengthen it?</div>
+                        <textarea id="biobond-mapping" placeholder="Personal (3-7 deep relationships):&#10;Team (work/school group):&#10;Organizational (broader community):&#10;Societal (civic participation):" aria-label="BioBond network mapping"></textarea>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="button secondary" onclick="prevSection()"><span aria-hidden="true">←</span> Previous</button>
+                    <button class="button" onclick="nextSection()">Continue to Design Principles <span aria-hidden="true">→</span></button>
+                </div>
+            </section>
+
+            <!-- SECTION 7: Design Principles -->
+            <section class="section hidden" id="section7">
+                <h2><span class="emoji">🏗️</span> The Adaptive Moral Commonwealth: Design Principles</h2>
+
+                <h3>Institutions That Don't Age</h3>
+
+                <p>If institutions age through loss of morphostatic information (degraded ethical patterns + achieved purpose leading to drift), how do we design institutions that regenerate?</p>
+
+                <div class="concept-box key-insight">
+                    <div class="concept-title">Core Principle</div>
+                    <p>Extract principles from Levin's successful cases (planaria, anthrobots) and apply them to social architecture.</p>
+                </div>
+
+                <h3>Four Design Principles from Biology</h3>
+
+                <div class="principle-card" style="margin: 20px 0;">
+                    <div class="principle-number">1</div>
+                    <div class="principle-name">Maintain the Bioelectric Pattern (Clear Ethical CIBs)</div>
+                    <p><strong>Biological Parallel:</strong> Planaria don't age because bioelectric pattern stays sharp.</p>
+                    
+                    <h4>Implementation:</h4>
+                    <ul>
+                        <li><strong>Explicit values:</strong> Concrete CIBs embedded in practice, not vague mission statements</li>
+                        <li><strong>Ritual maintenance:</strong> Regular practices refreshing ethical alignment (Confucian Li at scale)</li>
+                        <li><strong>Pattern monitoring:</strong> Measure ethical coherence, detect degradation early</li>
+                        <li><strong>Active correction:</strong> Intervene to restore patterns when degrading</li>
+                    </ul>
+
+                    <div class="case-study">
+                        <div class="case-study-title">Example: REI (Outdoor Retail Cooperative)</div>
+                        <p>Maintained since 1938 through explicit cooperative structure. Annual dividend reaffirms: "We exist to serve outdoor enthusiasts, not extract profit." Member meetings function as ethical pattern refresh.</p>
+                    </div>
+                </div>
+
+                <div class="principle-card" style="margin: 20px 0;">
+                    <div class="principle-number">2</div>
+                    <div class="principle-name">Provide Continuous Developmental Goals (Prevent Boredom)</div>
+                    <p><strong>Biological Parallel:</strong> Planaria avoid aging by constantly tearing in half and regenerating.</p>
+                    
+                    <h4>Implementation:</h4>
+                    <ul>
+                        <li><strong>Perpetual incompletion:</strong> Design goals that can never be fully "achieved"</li>
+                        <li><strong>Periodic resets:</strong> Deliberately tear down and rebuild aspects of organization</li>
+                        <li><strong>Embedded learning:</strong> Make continuous learning the purpose, not just means</li>
+                        <li><strong>Mission evolution:</strong> Allow purpose to evolve while maintaining core pattern</li>
+                    </ul>
+
+                    <div class="case-study">
+                        <div class="case-study-title">Example: Wikipedia</div>
+                        <p>Goal perpetually incomplete: "Sum of all human knowledge" unreachable. Constant vandalism requires regeneration. Community debates governance (periodic reset). New languages/topics keep developmental purpose alive. Result: Sustained ethical culture 20+ years despite being free and volunteer-run.</p>
+                    </div>
+                </div>
+
+                <div class="principle-card" style="margin: 20px 0;">
+                    <div class="principle-number">3</div>
+                    <div class="principle-name">Build Regeneration into Structure (Morphoceutical Architecture)</div>
+                    <p><strong>Biological Parallel:</strong> Levin's Morphoceuticals chemically restore bioelectric patterns.</p>
+                    
+                    <h4>Implementation:</h4>
+                    <ul>
+                        <li><strong>Sortition panels:</strong> Random selection of stakeholders to review decisions</li>
+                        <li><strong>Sunset clauses:</strong> Policies/structures expire unless renewed</li>
+                        <li><strong>Conscience gates:</strong> Frontline workers can halt harmful processes</li>
+                        <li><strong>Rotation systems:</strong> Leadership, roles, teams rotate to prevent capture</li>
+                        <li><strong>BioBond Sabbaticals:</strong> Mandatory time for relationship renewal</li>
+                    </ul>
+
+                    <div class="case-study">
+                        <div class="case-study-title">Example: W.L. Gore & Associates (Gore-Tex)</div>
+                        <p>No traditional hierarchy, self-organizing teams. "Lattice structure" allows direct BioBonds. Leaders emerge naturally and can be replaced. Max team size ~150 (Dunbar number). Periodic reorganization around new products = forced regeneration. Result: Innovation sustained 60+ years.</p>
+                    </div>
+                </div>
+
+                <div class="principle-card" style="margin: 20px 0;">
+                    <div class="principle-number">4</div>
+                    <div class="principle-name">Create Feedback Loops (Coherence Monitoring)</div>
+                    <p><strong>Biological Parallel:</strong> Cells use bioelectric feedback to detect pattern deviation and correct.</p>
+                    
+                    <h4>Implementation:</h4>
+                    <ul>
+                        <li><strong>Stakeholder voice:</strong> Those affected have direct input, not just surveys</li>
+                        <li><strong>Transparent metrics:</strong> Ethical coherence measured alongside financial performance</li>
+                        <li><strong>Whistleblower infrastructure:</strong> Protected channels for pattern-violation reporting</li>
+                        <li><strong>Regular audits:</strong> Third-party assessment of actual vs. stated values alignment</li>
+                        <li><strong>Adaptive correction:</strong> Automatic intervention when coherence drops</li>
+                    </ul>
+
+                    <div class="case-study">
+                        <div class="case-study-title">Example: Patagonia</div>
+                        <p>Environmental impact transparent and measured. 1% for the planet embedded in structure. Employees can halt production if standards violated. Recent transfer to purpose trust prevents mission drift. Result: Pattern maintained across leadership transitions.</p>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="button secondary" onclick="prevSection()"><span aria-hidden="true">←</span> Previous</button>
+                    <button class="button" onclick="nextSection()">Continue to Morphoceuticals <span aria-hidden="true">→</span></button>
+                </div>
+            </section>
+
+            <!-- SECTION 8: Morphoceuticals -->
+            <section class="section hidden" id="section8">
+                <h2><span class="emoji">💊</span> Morphoceuticals for Institutions</h2>
+
+                <h3>Practical Interventions for Pattern Restoration</h3>
+
+                <p>Drawing from Levin's approach—using targeted interventions to restore degraded bioelectric patterns—we can design institutional morphoceuticals:</p>
+
+                <div class="action-plan">
+                    <h3>Four Morphoceutical Interventions</h3>
+
+                    <div class="action-item">
+                        <div class="action-number">Intervention 1: The Conscience Gate</div>
+                        <p><strong>Based on:</strong> Levin's finding that brief bioelectric stimulus (24 hours) can trigger 18 months of regeneration.</p>
+                        
+                        <p><strong>Design:</strong></p>
+                        <ul>
+                            <li>Frontline workers can trigger immediate halt of harmful processes</li>
+                            <li>Triggers escalation to Conscience Gate panel (cross-functional, includes affected stakeholders)</li>
+                            <li>Panel has 72 hours to decide: proceed, modify, or terminate</li>
+                            <li>Decision must include explicit ethical reasoning connecting to institutional values</li>
+                        </ul>
+
+                        <p><strong>Function:</strong> Prevents "ethical momentum" where harmful processes continue because no one can stop them. Single intervention creates ripple effects.</p>
+
+                        <p><strong>Example:</strong> Nurse triggers Conscience Gate when patient care protocol conflicts with hospital's "do no harm" value. Cross-functional panel (nurse, doctor, administrator, patient advocate) must pause, reason through conflict, restore coherence.</p>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-number">Intervention 2: The Sabbatical Regeneration</div>
+                        <p><strong>Based on:</strong> Planaria's constant tearing-in-half to force regeneration.</p>
+                        
+                        <p><strong>Design:</strong></p>
+                        <ul>
+                            <li>Every 7-10 years, organizations deliberately "tear in half"</li>
+                            <li>Leadership rotates completely (or steps aside temporarily)</li>
+                            <li>Teams reorganize around new configurations</li>
+                            <li>Strategy undergoes fundamental questioning</li>
+                            <li>Resources redistributed based on current purpose, not historical allocation</li>
+                        </ul>
+
+                        <p><strong>Function:</strong> Prevents "boredom death" by forcing new developmental goals. Breaks calcified patterns. Allows embedded wisdom to resurface.</p>
+
+                        <p><strong>Example:</strong> University department every 10 years: leadership rotates, curriculum fully redesigned, faculty rearranged into new research clusters, budget zero-based. Forces rediscovery of core purpose.</p>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-number">Intervention 3: The BioBond Audit</div>
+                        <p><strong>Based on:</strong> Levin's measurement of bioelectric patterns to detect degradation.</p>
+                        
+                        <p><strong>Design:</strong></p>
+                        <ul>
+                            <li>Regular measurement of BioBond health across all network levels</li>
+                            <li>Metrics: trust scores, psychological safety, cross-functional connection density, stakeholder voice quality</li>
+                            <li>Results trigger automatic interventions when thresholds crossed</li>
+                            <li>Transparent reporting (everyone sees organizational "bioelectric health")</li>
+                        </ul>
+
+                        <p><strong>Function:</strong> Early detection of pattern degradation before catastrophic failure. Makes invisible (BioBond health) visible and measurable.</p>
+
+                        <p><strong>Example:</strong> Tech company measures BioBond health quarterly. When cross-functional connection density drops 30%, automatic trigger: leadership must facilitate cross-team project, rotate members, or host integration retreat.</p>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-number">Intervention 4: The Anthrobot Principle</div>
+                        <p><strong>Based on:</strong> Levin's discovery that reorganizing cells into new tasks reverses aging.</p>
+                        
+                        <p><strong>Design:</strong></p>
+                        <ul>
+                            <li>When organizational aging detected, create "anthrobot" sub-organizations</li>
+                            <li>Small teams with radical autonomy to solve specific problems</li>
+                            <li>Staff with mix of veterans (institutional memory) and newcomers (fresh perspective)</li>
+                            <li>Give genuinely challenging mission requiring new approaches</li>
+                            <li>Allow self-organization with minimal hierarchical control</li>
+                        </ul>
+
+                        <p><strong>Function:</strong> Rejuvenates both individuals and organization through new developmental purpose. Creates "younger" organizational tissue that can seed broader regeneration.</p>
+
+                        <p><strong>Example:</strong> Manufacturing company experiencing decline. Creates "anthrobot" team: 8 people (mix of veterans and new hires) with mission to reimagine production using sustainability as primary value. Team given 6 months, full autonomy, direct resources. Veterans report feeling "20 years younger professionally."</p>
+                    </div>
+                </div>
+
+                <div class="interactive-exercise">
+                    <div class="exercise-title">Design Your Morphoceutical</div>
+                    <div class="question">
+                        <div class="question-text">Choose an organization you know that's showing signs of aging. Which morphoceutical intervention would be most effective? How would you implement it? What resistance would you face?</div>
+                        <textarea id="morphoceutical-design" placeholder="Organization:&#10;Aging symptoms observed:&#10;Chosen intervention:&#10;Implementation plan:&#10;Expected resistance:" aria-label="Morphoceutical intervention design"></textarea>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="button secondary" onclick="prevSection()"><span aria-hidden="true">←</span> Previous</button>
+                    <button class="button" onclick="nextSection()">Continue to Personal Application <span aria-hidden="true">→</span></button>
+                </div>
+            </section>
+
+            <!-- SECTION 9: Personal Application -->
+            <section class="section hidden" id="section9">
+                <h2><span class="emoji">🎯</span> Personal Application: Building Your Moral Commonwealth</h2>
+
+                <h3>From Theory to Practice</h3>
+
+                <p>You're a community college student, likely juggling work, family, and school. How does any of this apply to your actual life?</p>
+
+                <div class="action-plan">
+                    <h3>Four Levels of Personal Action</h3>
+
+                    <div class="action-item">
+                        <div class="action-number">Level 1: Maintain Your Personal Bioelectric Pattern</div>
+                        
+                        <p><strong>Recognize:</strong> Your Identity Kernel is your bioelectric pattern. It requires maintenance.</p>
+                        
+                        <p><strong>Practice:</strong></p>
+                        <ol>
+                            <li><strong>Pattern monitoring:</strong> Weekly check-in—Am I aligned with core values? Where am I drifting?</li>
+                            <li><strong>BioBond maintenance:</strong> Schedule time with 3-7 core relationships. Not optional. Metabolic necessity.</li>
+                            <li><strong>Purpose renewal:</strong> Every 3-6 months, articulate "What am I building toward?"</li>
+                            <li><strong>Sabbath principle:</strong> One day per week, disconnect from productivity. Allow pattern to consolidate.</li>
+                            <li><strong>Challenge seeking:</strong> When life feels "done," find new regenerative challenge.</li>
+                        </ol>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-number">Level 2: Build Your Team's Bioelectric Network</div>
+                        
+                        <p><strong>Recognize:</strong> Your team/class/friend group is cellular collective requiring coordinated pattern.</p>
+                        
+                        <p><strong>Practice:</strong></p>
+                        <ol>
+                            <li><strong>Explicit values:</strong> Make team's ethical pattern visible</li>
+                            <li><strong>Ritual refresh:</strong> Regular check-ins where team reaffirms purpose</li>
+                            <li><strong>Conscience gates:</strong> Create norm where anyone can call "stop"</li>
+                            <li><strong>Rotation experiments:</strong> Periodically shuffle roles/responsibilities</li>
+                            <li><strong>New challenges:</strong> When goal achieved, immediately identify next purpose</li>
+                        </ol>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-number">Level 3: Advocate for Institutional Morphostasis</div>
+                        
+                        <p><strong>Recognize:</strong> Your workplace/school/community can age. You can advocate for regeneration.</p>
+                        
+                        <p><strong>Practice:</strong></p>
+                        <ol>
+                            <li><strong>Pattern diagnosis:</strong> Observe symptoms of institutional aging</li>
+                            <li><strong>Propose morphoceuticals:</strong> Suggest specific interventions</li>
+                            <li><strong>Find allies:</strong> Form coalition of pattern-aware colleagues</li>
+                            <li><strong>Pilot projects:</strong> Start small—implement in your team/department</li>
+                            <li><strong>Make visible:</strong> Measure and communicate results</li>
+                        </ol>
+                    </div>
+
+                    <div class="action-item">
+                        <div class="action-number">Level 4: Design Regenerative Systems</div>
+                        
+                        <p><strong>Recognize:</strong> The society you're inheriting is aging. Your generation must build regenerative structures.</p>
+                        
+                        <p><strong>Practice:</strong></p>
+                        <ol>
+                            <li><strong>Join/create voluntary associations:</strong> Participate in governance of commons</li>
+                            <li><strong>Support regenerative businesses:</strong> Choose cooperative structures, B-corps</li>
+                            <li><strong>Demand institutional transparency:</strong> Make "bioelectric health" visible</li>
+                            <li><strong>Protect civic space:</strong> Advocate for places where BioBonds form</li>
+                            <li><strong>Vote for regenerative policy:</strong> Support adaptive capacity, not just efficiency</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="interactive-exercise">
+                    <div class="exercise-title">Your Personal Action Plan</div>
+                    
+                    <div class="question">
+                        <div class="question-text">1. Which level is most urgent for you right now?</div>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="level1" name="urgentLevel" value="1">
+                                <label for="level1">Level 1: Personal pattern maintenance (I'm drifting from my values)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="level2" name="urgentLevel" value="2">
+                                <label for="level2">Level 2: Team bioelectric network (My team lacks coherence)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="level3" name="urgentLevel" value="3">
+                                <label for="level3">Level 3: Institutional advocacy (My organization is aging)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="level4" name="urgentLevel" value="4">
+                                <label for="level4">Level 4: System design (I want to build regenerative structures)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">2. What is one specific action you will take in the next 7 days?</div>
+                        <textarea id="action-commitment" placeholder="Be specific: What will you do? When? With whom?" aria-label="Seven-day action commitment"></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">3. What obstacle do you anticipate? How will you overcome it?</div>
+                        <textarea id="obstacle-plan" placeholder="Obstacle:&#10;Strategy to overcome:" aria-label="Obstacle planning"></textarea>
+                    </div>
+
+                    <button class="button" onclick="saveActionPlan()">Save My Action Plan</button>
+                    <div class="feedback" id="actionPlanFeedback"></div>
+                </div>
+
+                <div class="navigation">
+                    <button class="button secondary" onclick="prevSection()"><span aria-hidden="true">←</span> Previous</button>
+                    <button class="button" onclick="nextSection()">Continue to Final Synthesis <span aria-hidden="true">→</span></button>
+                </div>
+            </section>
+
+            <!-- SECTION 10: Synthesis and Conclusion -->
+            <section class="section hidden" id="section10">
+                <h2><span class="emoji">🌟</span> The Thermodynamics of Hope</h2>
+
+                <h3>From Despair to Design</h3>
+
+                <div class="concept-box key-insight">
+                    <div class="concept-title">Why This Matters</div>
+                    <p>We began this course with the Ethical Telescope, learning to see invisible structures. We examined the Hardware (Sapolsky, Levin): You are a biological machine fighting entropy.</p>
+                    <p><strong>But here's where Levin's work transforms despair into hope:</strong></p>
+                    <p style="font-size: 1.2em; font-weight: 700; color: var(--primary); margin-top: 15px;">Aging is not inevitable. Decay is not destiny.</p>
+                </div>
+
+                <p>If organisms can escape aging by maintaining bioelectric patterns and providing continuous regenerative purpose, then <strong>institutions can escape aging through the same mechanisms.</strong></p>
+
+                <p>If anthrobots can rejuvenate by reorganizing around new tasks, then <strong>you can rejuvenate by reorganizing around new purposes.</strong></p>
+
+                <div class="concept-box critical">
+                    <div class="concept-title">The Adaptive Moral Commonwealth</div>
+                    <p>This is not utopian fantasy. It's an engineering problem with biological proof-of-concept.</p>
+                </div>
+
+                <h3>The Three Laws of Social Morphostasis</h3>
+
+                <div class="principles-grid">
+                    <div class="principle-card">
+                        <div class="principle-number">I</div>
+                        <div class="principle-name">Coherence Requires Maintenance</div>
+                        <ul>
+                            <li>Ethical patterns don't persist automatically</li>
+                            <li>Without active energy input (BioBonds, purpose, ritual), they degrade</li>
+                            <li>Maintenance is not optional if coherence is desired</li>
+                        </ul>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-number">II</div>
+                        <div class="principle-name">Stagnation Leads to Death</div>
+                        <ul>
+                            <li>Purpose-completion without new challenges triggers boredom death</li>
+                            <li>Institutions and individuals need perpetual incompletion</li>
+                            <li>Regeneration requires tearing down and rebuilding periodically</li>
+                        </ul>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-number">III</div>
+                        <div class="principle-name">Network Determines Capacity</div>
+                        <ul>
+                            <li>Individual regeneration requires BioBond networks</li>
+                            <li>Institutional regeneration requires stakeholder voice</li>
+                            <li>Civilizational regeneration requires cross-tribal cooperation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Your Choice: Architect or Archaeologist?</h3>
+
+                <p>You are graduating into a world of aging institutions:</p>
+                <ul>
+                    <li>Democracies losing coherence</li>
+                    <li>Corporations optimizing for quarterly returns (time-horizon collapse)</li>
+                    <li>Universities bureaucratizing</li>
+                    <li>Communities fragmenting</li>
+                    <li>Global coordination failing on climate, AI, pandemics</li>
+                </ul>
+
+                <div class="concept-box">
+                    <div class="concept-title">Two Paths Forward</div>
+                    
+                    <h4>Option 1: Passive Victim</h4>
+                    <ul>
+                        <li>Accept "this is how things are"</li>
+                        <li>Maximize individual survival within decaying systems</li>
+                        <li>Wait for collapse</li>
+                        <li>Blame boomers, capitalism, technology, human nature</li>
+                    </ul>
+
+                    <h4>Option 2: Conscious Architect</h4>
+                    <ul>
+                        <li>Recognize decay as thermodynamic problem with engineering solutions</li>
+                        <li>Build BioBond networks maintaining your coherence</li>
+                        <li>Design regenerative interventions at scale you can influence</li>
+                        <li>Participate in building Adaptive Moral Commonwealth</li>
+                        <li>Apply Levin's principles across levels: cellular → individual → social → institutional</li>
+                    </ul>
+                </div>
+
+                <h3>Your Toolkit</h3>
+
+                <p>This course has given you the tools:</p>
+                <ul>
+                    <li><strong>The Telescope:</strong> See invisible structures</li>
+                    <li><strong>The Timeline:</strong> Trace causality backward through time</li>
+                    <li><strong>The CIB Framework:</strong> Understand information structures fighting entropy</li>
+                    <li><strong>The Sapolsky Limit:</strong> Recognize metabolic constraints on agency</li>
+                    <li><strong>The BioBond:</strong> Build networks maintaining coherence</li>
+                    <li><strong>The Morphostasis:</strong> Design systems that regenerate rather than decay</li>
+                </ul>
+
+                <div class="concept-box critical">
+                    <div class="concept-title">The Work Begins Now</div>
+                    <p>Not with grand political revolution. Not with perfect individual enlightenment.</p>
+                    <p>With <strong>everyday acts of pattern maintenance:</strong></p>
+                    <ul>
+                        <li>Protecting your BioBonds when capitalism demands 80-hour weeks</li>
+                        <li>Building team rituals that refresh ethical coherence</li>
+                        <li>Proposing Conscience Gates in your workplace</li>
+                        <li>Joining voluntary associations to prevent civic decay</li>
+                        <li>Designing organizations with regenerative structure</li>
+                        <li>Raising children who understand they're thermodynamic systems requiring maintenance</li>
+                        <li>Voting for policies that support morphostasis at civilizational scale</li>
+                    </ul>
+                </div>
+
+                <div class="concept-box key-insight">
+                    <div class="concept-title">Levin's Promise</div>
+                    <p>Michael Levin has shown us that aging can be defeated at the cellular level. The planarian proves it's possible. The anthrobot demonstrates the mechanism. The morphoceuticals are coming.</p>
+                    <p><strong>Your generation's task: Apply the same principles to social aging.</strong></p>
+                    <p>Build institutions that don't decay. Design economies that regenerate. Create communities that maintain coherence across difference. Construct a civilization that can coordinate at scale without collapsing into tribalism or bureaucracy.</p>
+                </div>
+
+                <h3>The Final Question</h3>
+
+                <div class="concept-box critical" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 30px; text-align: center;">
+                    <p style="font-size: 1.4em; font-weight: 700; margin-bottom: 15px;">Levin asks: "Can we provide a reminder to our institutions of what they should be doing?"</p>
+                    <p style="font-size: 1.6em; font-weight: 700;">I ask you: Will you be architects or archaeologists?</p>
+                    <p style="font-size: 1.1em; margin-top: 15px; font-style: italic;">The bioelectric pattern is waiting to be written.</p>
+                </div>
+
+                <div class="interactive-exercise">
+                    <div class="exercise-title">Final Commitment</div>
+                    <div class="question">
+                        <div class="question-text">Write your commitment: How will you be an architect of the Adaptive Moral Commonwealth? What pattern will you help maintain or create?</div>
+                        <textarea id="final-commitment" placeholder="I commit to..." aria-label="Final commitment as architect"></textarea>
+                    </div>
+                    <button class="button" onclick="saveFinalCommitment()">Record My Commitment</button>
+                    <div class="feedback" id="commitmentFeedback"></div>
+                </div>
+
+                <div class="navigation" style="border-top: 3px solid var(--primary); padding-top: 30px; margin-top: 40px;">
+                    <button class="button secondary" onclick="prevSection()"><span aria-hidden="true">←</span> Previous</button>
+                    <button class="button" onclick="exportAllResponses()" style="background: var(--success);">Export All My Work <span aria-hidden="true">↓</span></button>
+                </div>
+            </section>
+        </div>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Smooth scroll for nav links
-            document.querySelectorAll('header nav a').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            });
+        let currentSection = 1;
+        const totalSections = 10;
 
-            // Performance Chart
-            const perfCtx = document.getElementById('performanceChart').getContext('2d');
-            new Chart(perfCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Complex Dilemmas', 'Adaptation', 'Innovation', 'Stakeholder Satisfaction'],
-                    datasets: [{
-                        label: '% Superior Performance of Diverse Teams',
-                        data: [23, 40, 35, 52],
-                        backgroundColor: 'rgba(79, 70, 229, 0.6)',
-                        borderColor: 'rgba(79, 70, 229, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, max: 60, ticks: { callback: value => value + '%' } } },
-                    plugins: { legend: { display: false } }
-                }
-            });
+        function updateProgress() {
+            const progress = (currentSection / totalSections) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.querySelector('.progress-bar').setAttribute('aria-valuenow', progress);
+        }
 
-            // PRF Details
-            const prfDetails = {
-                b: { title: 'Belief System (B)', text: "Your probability assessments and confidence levels about moral propositions, with measurable neural correlates in prefrontal regions." },
-                r: { title: 'Rule System (R)', text: "Your procedural knowledge for navigating ethical situations, with weighted decision procedures that activate based on context." },
-                o: { title: 'Ontological System (O)', text: "Your fundamental categories for understanding moral reality—concepts of personhood, responsibility, harm, and justice." },
-                a: { title: 'Authenticity System (A+)', text: "Your standards for evaluating alignment with your core identity, including your Identity Kernel (IK), the invariant structures of your ethical self." },
-                c: { title: 'Coordination Capabilities (C)', text: "Your empirically assessed skills for working with others on ethical challenges, including perspective-taking and conflict resolution." },
-                uev: { title: 'Unified Experience Vector (UEV)', text: "The simultaneous, measurable integration of your Global Feeling Tone, Emotional Motivation Vector, Rational Deliberation Vector, and Action Readiness Vector." }
-            };
-
-            const prfDetailTitle = document.getElementById('prf-detail-title');
-            const prfDetailText = document.getElementById('prf-detail-text');
-            document.querySelectorAll('.interactive-card[id^="prf-card-"]').forEach(card => {
-                card.addEventListener('click', () => {
-                    document.querySelectorAll('.interactive-card[id^="prf-card-"]').forEach(c => c.classList.remove('active'));
-                    card.classList.add('active');
-                    const key = card.id.split('-')[2];
-                    prfDetailTitle.innerText = prfDetails[key].title;
-                    prfDetailText.innerText = prfDetails[key].text;
-                });
-            });
-
-            // Logic Toolkit Tabs
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tab = btn.dataset.tab;
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    tabContents.forEach(content => {
-                        if (content.id === `tab-content-${tab}`) {
-                            content.classList.remove('hidden');
-                        } else {
-                            content.classList.add('hidden');
-                        }
-                    });
-                });
+        function showSection(sectionNum) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
             });
             
-            // ATCF Chart
-            const atcfCtx = document.getElementById('atcfChart').getContext('2d');
-            new Chart(atcfCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Historical Continuity (HC)', 'Present Integration (PI)', 'Prospective Coherence (PC)', 'Meta-Constructor Capacity (MCC)'],
-                    datasets: [{
-                        label: 'ATCF Components',
-                        data: [25, 25, 25, 25],
-                        backgroundColor: ['rgba(79, 70, 229, 0.7)', 'rgba(30, 64, 175, 0.7)', 'rgba(129, 140, 248, 0.7)', 'rgba(199, 210, 254, 0.7)'],
-                        borderColor: '#f1f5f9',
-                        borderWidth: 2
-                    }]
-                },
-                options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-            });
-
-            // Cartography Steps
-            const stepDetails = {
-                '1': { title: '1. Cross-Scale Analysis', text: 'Map the coordination requirements across all levels, from individual developers to international bodies. Identify how actions at one scale impact others.' },
-                '2': { title: '2. PRF Proposition Development', text: 'Instead of abstract principles like "AI should be fair," define the specific capabilities development teams must have in their Belief, Rule, and other PRF systems to detect and mitigate bias.' },
-                '3': { title: '3. Strategic Analysis (ATL)', text: 'Use Alternating-Time Temporal Logic to ask: "Does humanity have coalition strategies to ensure ethical AI development, even with conflicting interests and external pressures?" This moves from hope to strategy.' },
-                '4': { title: '4. Agency Assessment (STIT)', text: 'Use STIT logic to identify which specific agents (e.g., a lead engineer, a safety board) have the actual power to "see to it that" an ethical constraint is implemented, clarifying responsibility.' },
-                '5': { title: '5. Temporal Coherence Check (ATCF)', text: 'Assess whether the proposed guidelines will enhance or fragment the long-term ethical coherence of the stakeholders. Will these rules support authentic development or force inauthentic compliance?' },
-                '6': { title: '6. Game-Theoretic Validation', text: 'Test the proposed guidelines in a simulated "game" against serious challenges (e.g., market competition, national security concerns) to ensure they form a "winning strategy" for ethical AI.' }
-            };
-
-            const stepItems = document.querySelectorAll('.step-item');
-            const stepDetailTitle = document.getElementById('step-detail-title');
-            const stepDetailText = document.getElementById('step-detail-text');
-
-            function updateStepView(step) {
-                 stepItems.forEach(item => item.classList.remove('active'));
-                 document.getElementById(`step-${step}`).classList.add('active');
-                 stepDetailTitle.innerText = stepDetails[step].title;
-                 stepDetailText.innerText = stepDetails[step].text;
+            // Show target section
+            const targetSection = document.getElementById('section' + sectionNum);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                currentSection = sectionNum;
+                updateProgress();
+                saveProgress();
             }
+        }
 
-            stepItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const step = item.id.split('-')[1];
-                    updateStepView(step);
-                });
-            });
-            updateStepView('1');
+        function nextSection() {
+            if (currentSection < totalSections) {
+                showSection(currentSection + 1);
+            }
+        }
+
+        function prevSection() {
+            if (currentSection > 1) {
+                showSection(currentSection - 1);
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('chapter21_progress', currentSection);
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('chapter21_progress');
+            if (saved) {
+                showSection(parseInt(saved));
+            }
+        }
+
+        function calculateDiagnostic() {
+            const checkboxes = document.querySelectorAll('input[name="symptom"]:checked');
+            const score = checkboxes.length * 10;
+            
+            const resultDiv = document.getElementById('diagnosticResult');
+            const scoreDiv = document.getElementById('agingScore');
+            const interpretationDiv = document.getElementById('agingInterpretation');
+            const recommendationsDiv = document.getElementById('agingRecommendations');
+            
+            scoreDiv.textContent = 'Institutional Aging Score: ' + score + '/100';
+            
+            let interpretation = '';
+            let recommendations = '';
+            
+            if (score <= 20) {
+                interpretation = '<p><strong>Status: Healthy Morphostasis</strong></p><p>Your institution shows minimal signs of aging. The bioelectric pattern appears sharp and coherent. Continue current practices while remaining vigilant for early degradation signals.</p>';
+                recommendations = '<h4>Recommendations:</h4><ul><li>Implement BioBond Audit to establish baseline metrics</li><li>Document current practices for pattern maintenance</li><li>Build early warning systems for future monitoring</li></ul>';
+            } else if (score <= 40) {
+                interpretation = '<p><strong>Status: Early Pattern Degradation</strong></p><p>Some aging symptoms are emerging. This is the ideal time for intervention—before catastrophic failure. The pattern is still recoverable with targeted morphoceuticals.</p>';
+                recommendations = '<h4>Recommendations:</h4><ul><li>Implement Conscience Gate system immediately</li><li>Conduct purpose audit: Is developmental goal still clear?</li><li>Strengthen BioBond networks through team-building</li><li>Consider rotating leadership or roles to prevent calcification</li></ul>';
+            } else if (score <= 60) {
+                interpretation = '<p><strong>Status: Moderate Institutional Aging</strong></p><p>Significant pattern degradation detected. The organization is drifting from its purpose. Immediate intervention required to prevent acceleration into decay phase.</p>';
+                recommendations = '<h4>Recommendations:</h4><ul><li>Launch Anthrobot experiment: Create autonomous sub-team with clear regenerative mission</li><li>Implement full Sabbatical Regeneration cycle</li><li>Reassess and restate core values with stakeholder input</li><li>Establish new developmental goals (perpetual incompletion)</li><li>Consider external facilitation for pattern restoration</li></ul>';
+            } else if (score <= 80) {
+                interpretation = '<p><strong>Status: Advanced Decay</strong></p><p>The institution is in late-stage aging. Bioelectric pattern severely degraded. Organizational coherence maintained by inertia, not purpose. Urgent comprehensive intervention needed.</p>';
+                recommendations = '<h4>Recommendations:</h4><ul><li>Full organizational reset required</li><li>Engage all stakeholders in fundamental purpose rethinking</li><li>Consider bringing in new leadership with regenerative mandate</li><li>Implement all four morphoceutical interventions simultaneously</li><li>Prepare for possibility that institution may need to dissolve and reform</li><li>Document lessons learned for successor organizations</li></ul>';
+            } else {
+                interpretation = '<p><strong>Status: Zombie Institution</strong></p><p>Complete pattern collapse. The organization exists in form only, not function. At this stage, regeneration may be impossible. Consider whether dissolution and new formation would be more effective than attempted revival.</p>';
+                recommendations = '<h4>Recommendations:</h4><ul><li>Conduct honest assessment: Can this institution be saved?</li><li>If YES: Requires complete teardown and rebuild (7-10 year Sabbatical)</li><li>If NO: Plan graceful dissolution, preserve lessons learned</li><li>Either way: Begin designing successor organization with regenerative architecture from inception</li><li>Use this as learning opportunity—document what led to collapse</li></ul>';
+            }
+            
+            interpretationDiv.innerHTML = interpretation;
+            recommendationsDiv.innerHTML = recommendations;
+            resultDiv.classList.add('show');
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function saveActionPlan() {
+            const level = document.querySelector('input[name="urgentLevel"]:checked');
+            const action = document.getElementById('action-commitment').value;
+            const obstacle = document.getElementById('obstacle-plan').value;
+            
+            if (!level || !action || !obstacle) {
+                showFeedback('actionPlanFeedback', 'Please complete all fields before saving.', 'incorrect');
+                return;
+            }
+            
+            const plan = {
+                level: level.value,
+                action: action,
+                obstacle: obstacle,
+                date: new Date().toISOString()
+            };
+            
+            localStorage.setItem('chapter21_actionPlan', JSON.stringify(plan));
+            showFeedback('actionPlanFeedback', '✓ Action plan saved! Review it in 7 days to track your progress.', 'correct');
+        }
+
+        function saveFinalCommitment() {
+            const commitment = document.getElementById('final-commitment').value;
+            
+            if (!commitment) {
+                showFeedback('commitmentFeedback', 'Please write your commitment before recording.', 'incorrect');
+                return;
+            }
+            
+            localStorage.setItem('chapter21_commitment', JSON.stringify({
+                text: commitment,
+                date: new Date().toISOString()
+            }));
+            
+            showFeedback('commitmentFeedback', '✓ Your commitment as an architect of the Adaptive Moral Commonwealth has been recorded. Welcome to the work.', 'correct');
+        }
+
+        function showFeedback(elementId, message, type) {
+            const feedback = document.getElementById(elementId);
+            feedback.textContent = message;
+            feedback.className = 'feedback show ' + type;
+        }
+
+        function exportAllResponses() {
+            const responses = {
+                initialReflection: document.getElementById('initial-reflection')?.value || '',
+                purposeReflection: document.getElementById('purpose-reflection')?.value || '',
+                biobondMapping: document.getElementById('biobond-mapping')?.value || '',
+                morphoceuticalDesign: document.getElementById('morphoceutical-design')?.value || '',
+                actionPlan: JSON.parse(localStorage.getItem('chapter21_actionPlan') || '{}'),
+                finalCommitment: JSON.parse(localStorage.getItem('chapter21_commitment') || '{}'),
+                completionDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(responses, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Chapter21_BioelectricCommonwealth_Responses.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('Your work has been exported! Keep this file as a record of your learning and commitments.');
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' && currentSection < totalSections) {
+                nextSection();
+            } else if (e.key === 'ArrowLeft' && currentSection > 1) {
+                prevSection();
+            }
+        });
+
+        // Initialize
+        window.addEventListener('load', function() {
+            loadProgress();
         });
     </script>
 </body>
 </html>
-
